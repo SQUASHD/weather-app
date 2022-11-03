@@ -3,7 +3,7 @@ const weatherData = (
   temperature,
   feelsLike,
   humidity,
-  chanceOfRain,
+  precipationLastHour = null,
   windSpeed
 ) => {
   return {
@@ -11,7 +11,9 @@ const weatherData = (
     temperature,
     feelsLike,
     humidity,
-    chanceOfRain,
+    precipationLastHour,
     windSpeed,
   };
 };
+
+export { weatherData };
