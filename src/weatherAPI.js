@@ -4,8 +4,10 @@ import { locationData } from './locationData';
 class weatherAPI {
   static async fetchLocationDataByLocationName(locationInput) {
     const inputString = `http://api.openweathermap.org/geo/1.0/direct?q=${locationInput}&limit=1&appid=4235830f6ccafe215d9fa04cd144ac0f`;
+    console.log(inputString)
     const response = await fetch(inputString, { mode: 'cors' });
     const locationData = await response.json();
+    console.log(locationData)
     return locationData;
   }
 
