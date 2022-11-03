@@ -3,11 +3,6 @@ import { locationData } from './locationData';
 import { weatherData } from './weatherData';
 
 class UI {
-  constructor() {
-    this.locationdata = [];
-    this.weatherdata = [];
-  }
-
   static setHomePage() {
     const main = document.getElementById('main');
     main.innerHTML = `<input type="text" name="location-input" id="location-input" />`;
@@ -19,7 +14,9 @@ class UI {
     searchBar.addEventListener('keyup', (e) => {
       if (e.key === 'Enter') {
         const locationInput = searchBar.value;
-        UI.validateLocationInput(locationInput);
+        if (!UI.validateLocationInput(locationInput)) {
+          return UI.callWrongInputModal();
+        }
         UI.processUserInput(locationInput);
       }
     });
@@ -30,14 +27,18 @@ class UI {
     console.log(strippedLocationInput);
     let requestedLocationData;
     if (UI.determineZipOrCity(locationInput) === 'zipCountryCode') {
-      requestedLocationData = await weatherAPI.fetchLocationDataByZipPostCode(strippedLocationInput);
+      requestedLocationData = await weatherAPI.fetchLocationDataByZipPostCode(
+        strippedLocationInput
+      );
       console.log('zipCountryCode');
     } else {
-      requestedLocationData = await weatherAPI.fetchLocationDataByLocationName(strippedLocationInput);;
+      requestedLocationData = await weatherAPI.fetchLocationDataByLocationName(
+        strippedLocationInput
+      );
     }
-    const locationObject = requestedLocationData[0]
-    const inputLat = Math.round(locationObject.lat * 100) / 100;
-    const inputLon = Math.round(locationObject.lon * 100) / 100;
+    const locationObject = await requestedLocationData[0];
+    const inputLat = (await Math.round(locationObject.lat * 100)) / 100;
+    const inputLon = (await Math.round(locationObject.lon * 100)) / 100;
     const weatherData = await weatherAPI.fetchWeatherData(inputLat, inputLon);
     console.log(weatherData);
   }
@@ -57,7 +58,6 @@ class UI {
     } else if (zipCountryCodeRegex.test(locationInput)) {
       return true;
     } else {
-      UI.callWrongInputModal();
       return false;
     }
   }
@@ -79,8 +79,12 @@ class UI {
   }
 
   static stripWhiteSpace(input) {
-    const strippedInput = input.replace(/\s/g, '');
-    return strippedInput;
+    const returnString = input
+      .replace(/^\s+/, '')
+      .replace(/\s+$/, '')
+      .replace(/\s*,\s*/g, ',')
+      .replace(/\s+/g, '+');
+    return returnString;
   }
 
   // Modal Formatting
@@ -105,13 +109,14 @@ class UI {
     const span = document.getElementsByClassName('close')[0];
     span.onclick = function () {
       modal.style.display = 'none';
+      modal.innerHTML = '';
     };
     window.onclick = function (event) {
       if (event.target == modal) {
         modal.style.display = 'none';
+        modal.innerHTML = '';
       }
     };
-    modal.innerHTML = '';
   }
 }
 
