@@ -57,11 +57,10 @@ class UI {
     const inputLat = Math.round(locationObject.lat * 100) / 100;
     const inputLon = Math.round(locationObject.lon * 100) / 100;
     const weatherData = await weatherAPI.fetchWeatherData(inputLat, inputLon);
-    console.log(weatherData);
     UI.resetSearchBar();
     errorInfo.style.visibility = 'hidden';
     console.log("going to trigger displayWeatherData");
-    UI.displayWeatherData(weatherData);
+    UI.displayWeatherData(weatherData, locationObject);
   }
 
   static determineZipOrCity(locationInput) {
@@ -89,20 +88,23 @@ class UI {
     return returnString;
   }
 
-  static displayWeatherData(weatherData) {
+  static displayWeatherData(weatherData, locationObject) {
     const resultsContainer = document.getElementById('results-container');
-    updateHeader(weatherData);
+    updateHeader(weatherData, locationObject);
     updateTemperature(weatherData);
     updateHumidity(weatherData);
     updateWind(weatherData);
     updateCloudiness(weatherData)
     resultsContainer.style.display = 'flex';
 
-    function updateHeader(weatherData) {
+    function updateHeader(weatherData, locationObject) {
       const resultsHeader = document.querySelector('.results-header');
       const weatherDescription = document.querySelector('.weather-description');
-
-      resultsHeader.textContent = weatherData.name;
+      if (locationObject.state) {
+        resultsHeader.textContent = `${locationObject.name}, ${locationObject.state}, ${locationObject.country}`;
+      } else { 
+        resultsHeader.textContent = `${locationObject.name}, ${locationObject.country}`;
+      }
       weatherDescription.textContent = toTitleCase(weatherData.weather[0].description);
 
       function toTitleCase(str) {
