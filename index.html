@@ -20,14 +20,48 @@
     <div class="main" id="main">
       <div id="header-container">
         <h1 class="main-header">Weather App</h1>
-        <h2 class="main-header sub-header">Why use a superior product when I can practice using an API?</h1>
+        <h2 class="main-header sub-header">When looking out the window just won't do</h1>
       </div>
       <div id="search-container"></div>
       <div id="results-container">
-        <div class="weather-results-box temperature"></div>
-        <div class="weather-results-box humidity"></div>
-        <div class="weather-results-box wind"></div>
-        <div class="weather-results-box clouds"></div>
+        <div class="results-header">Sandefjord</div>
+        <div class="weather-description">Overcast Clouds</div>
+        <div class="results-box-container">
+          <div class="weather-results-box temperature">
+            <div class="results-main">
+              <div class="temperature-main">10 °C</div>
+              <div class="temperature-feels-like">Feels like 8 °C</div>
+            </div>
+            <div class="result-descriptor">Temperature</div>
+          </div>
+          <div class="weather-results-box humidity">
+            <div class="results-main">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-droplet-fill" viewBox="0 0 16 16">
+                <path d="M8 16a6 6 0 0 0 6-6c0-1.655-1.122-2.904-2.432-4.362C10.254 4.176 8.75 2.503 8 0c0 0-6 5.686-6 10a6 6 0 0 0 6 6ZM6.646 4.646l.708.708c-.29.29-1.128 1.311-1.907 2.87l-.894-.448c.82-1.641 1.717-2.753 2.093-3.13Z"/>
+              </svg>
+              <div class="humidity-value">87%</div>
+            </div>
+            <div class="result-descriptor humidity-main">Humidity</div>
+          </div>
+          <div class="weather-results-box wind">
+            <div class="results-main">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-wind" viewBox="0 0 16 16">
+                <path d="M12.5 2A2.5 2.5 0 0 0 10 4.5a.5.5 0 0 1-1 0A3.5 3.5 0 1 1 12.5 8H.5a.5.5 0 0 1 0-1h12a2.5 2.5 0 0 0 0-5zm-7 1a1 1 0 0 0-1 1 .5.5 0 0 1-1 0 2 2 0 1 1 2 2h-5a.5.5 0 0 1 0-1h5a1 1 0 0 0 0-2zM0 9.5A.5.5 0 0 1 .5 9h10.042a3 3 0 1 1-3 3 .5.5 0 0 1 1 0 2 2 0 1 0 2-2H.5a.5.5 0 0 1-.5-.5z"/>
+              </svg>
+              <div class="wind-value">2.06 m/s</div>
+            </div>
+            <div class="result-descriptor wind-main">Wind</div>
+          </div>
+          <div class="weather-results-box clouds">
+            <div class="results-main">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-fill" viewBox="0 0 16 16">
+                <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383z"/>
+              </svg>
+              <div class="clouds-value">100%</div>
+            </div>
+            <div class="result-descriptor clouds-main">Clouds</div>
+          </div>
+        </div>
       </div>
     </div>
     <div id="myModal" class="myModal"></div>
