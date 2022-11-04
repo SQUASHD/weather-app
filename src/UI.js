@@ -33,9 +33,19 @@ class UI {
     const strippedLocationInput = UI.stripReplaceWhiteSpace(locationInput);
     let requestedLocationData;
 
+    errorInfo.style.visibility = 'visible';
+
+    if (strippedLocationInput === '' || strippedLocationInput === ',') {
+      UI.displayErrorMessage('locationNotSpecified');
+      return;
+    } else if (!UI.validateInput(locationInput)) {
+      UI.displayErrorMessage('invalidinput');
+      return;
+    }
+
     errorInfo.textContent = 'Searching...';
 
-    if (UI.determineZipOrCity(locationInput) === 'zipCountryCode') {
+    if (UI.deterimeWhetherZIP(locationInput) === 'zipCountryCode') {
       requestedLocationData = await weatherAPI.fetchLocationDataByZipPostCode(
         strippedLocationInput
       );
@@ -57,23 +67,15 @@ class UI {
     const weatherData = await weatherAPI.fetchWeatherData(inputLat, inputLon);
     UI.resetSearchBar();
     errorInfo.style.visibility = 'hidden';
-    console.log("going to trigger displayWeatherData");
+    console.log('going to trigger displayWeatherData');
     UI.displayWeatherData(weatherData, locationObject);
   }
 
-  static determineZipOrCity(locationInput) {
-    const cityCountryCodeRegex = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*,\s[a-zA-Z]{2}$/;
-    const cityStateCountryCodeRegex = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*,\s[a-zA-Z]{2},\s[a-zA-Z]{2}$/;
+  static deterimeWhetherZIP(locationInput) {
     const zipCountryCodeRegex = /^\d{5},\s[a-zA-Z]{2}$/;
 
     if (zipCountryCodeRegex.test(locationInput)) {
       return 'zipCountryCode';
-    } else if (cityStateCountryCodeRegex.test(locationInput)) {
-      return 'cityStateCountryCode';
-    } else if (cityCountryCodeRegex.test(locationInput)) {
-      return 'cityCountryCode';
-    } else {
-      return 'city';
     }
   }
 
@@ -86,12 +88,20 @@ class UI {
     return returnString;
   }
 
+  static validateInput(input) {
+    const specialCharRegex = /^[@!"#$%&/()=?+@*\.:;<>§]+$/;
+    if (specialCharRegex.test(input)) {
+      return false;
+    }
+    return true;
+  }
+
   static displayWeatherData(weatherData, locationObject) {
     updateHeader(weatherData, locationObject);
     updateTemperature(weatherData);
     updateHumidity(weatherData);
     updateWind(weatherData);
-    updateCloudiness(weatherData)
+    updateCloudiness(weatherData);
 
     function updateHeader(weatherData, locationObject) {
       const resultsHeader = document.querySelector('.results-header');
@@ -100,7 +110,7 @@ class UI {
       const countryName = regionNamesInEnglish.of(locationObject.country);
       if (locationObject.state) {
         resultsHeader.textContent = `${locationObject.name}, ${locationObject.state}, ${countryName}`;
-      } else { 
+      } else {
         resultsHeader.textContent = `${locationObject.name}, ${countryName}`;
       }
       weatherDescription.textContent = toTitleCase(weatherData.weather[0].description);
@@ -126,7 +136,7 @@ class UI {
       const humidityValue = document.querySelector('.humidity-value');
       humidityValue.textContent = `${weatherData.main.humidity}%`;
     }
-    
+
     function updateWind(weatherData) {
       const windValue = document.querySelector('.wind-value');
       const windSpeed = Math.round(weatherData.wind.speed);
@@ -148,7 +158,11 @@ class UI {
     const errorInfo = document.getElementById('error-info');
     errorInfo.style.visibility = 'visible';
     if (errorType === 'locationNotFound') {
-      errorInfo.textContent = 'Location not found. Try again.';
+      errorInfo.textContent = 'Location not found. Sorry!';
+    } else if (errorType === 'locationNotSpecified') {
+      errorInfo.textContent = 'Please enter a location.';
+    } else if (errorType === 'invalidinput') {
+      errorInfo.textContent = "That's a bit silly, no?";
     }
   }
 }
