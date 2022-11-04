@@ -4,18 +4,19 @@ import { weatherData } from './weatherData';
 
 class UI {
   static setHomePage() {
-    const main = document.getElementById('main');
-    const mainTitle = document.createElement('h1');
-    mainTitle.setAttribute('id', 'main-title');
     generateSearchBar();
     UI.initSearchListener();
 
     function generateSearchBar() {
+      const searchContainer = document.getElementById('search-container');
       const searchBar = document.createElement('input');
+      const errorInfo = document.createElement('p');
       searchBar.setAttribute('type', 'text');
       searchBar.setAttribute('id', 'location-input');
       searchBar.setAttribute('placeholder', 'Search for a location');
-      main.appendChild(searchBar);
+      errorInfo.setAttribute('id', 'error-info');
+      searchContainer.appendChild(searchBar);
+      searchContainer.appendChild(errorInfo);
     }
   }
 
@@ -30,9 +31,12 @@ class UI {
   }
 
   static async processUserInput(locationInput) {
+    const errorInfo = document.getElementById('error-info');
     const strippedLocationInput = UI.stripReplaceWhiteSpace(locationInput);
-
     let requestedLocationData;
+
+    errorInfo.textContent = 'Searching...';
+    
     if (UI.determineZipOrCity(locationInput) === 'zipCountryCode') {
       requestedLocationData = await weatherAPI.fetchLocationDataByZipPostCode(
         strippedLocationInput
@@ -42,10 +46,9 @@ class UI {
         strippedLocationInput
       );
     }
-    console.log(requestedLocationData);
 
     if (requestedLocationData[0] === undefined) {
-      UI.displayModal('locationNotFound');
+      UI.displayErrorMessage('locationNotFound');
       UI.resetSearchBar();
       return;
     }
@@ -55,6 +58,8 @@ class UI {
     const inputLon = Math.round(locationObject.lon * 100) / 100;
     const weatherData = await weatherAPI.fetchWeatherData(inputLat, inputLon);
     console.log(weatherData);
+    UI.resetSearchBar();
+    errorInfo.style.visibility = 'hidden';
     UI.displayWeatherData(weatherData);
   }
 
@@ -87,81 +92,19 @@ class UI {
     const main = document.getElementById('main');
   }
 
-  // Modal Formatting
-
-  static displayModal(trigger) {
-    const modal = document.getElementById('myModal');
-    const modalContent = document.createElement('div');
-    const modalClose = document.createElement('span');
-    const modalTitle = document.createElement('h3');
-    const modalSubTitle = document.createElement('h4');
-    const modalTextContainer = document.createElement('div');
-
-    modal.style.display = 'flex';
-    modalContent.setAttribute('class', 'modal-content');
-    modalClose.setAttribute('id', 'modal-close');
-    modalTitle.setAttribute('class', 'modal-title');
-    modalSubTitle.setAttribute('class', 'modal-title');
-    modalTextContainer.setAttribute('class', 'modal-text-container');
-
-    if ((trigger = 'locationNotFound')) {
-      const para1 = document.createElement('p');
-      const para2 = document.createElement('p');
-      const para3 = document.createElement('p');
-      const para4 = document.createElement('p');
-      modalTitle.textContent = 'Error';
-      modalSubTitle.textContent = 'Location Not Found';
-      para1.textContent = 'Please try again.';
-      para2.textContent = 'Make sure your location is spelled correctly.';
-      para3.textContent = 'Make sure your location is in the correct format.';
-      para4.textContent = 'eg. New York, US';
-      modalTextContainer.appendChild(para1);
-      modalTextContainer.appendChild(para2);
-      modalTextContainer.appendChild(para3);
-      modalTextContainer.appendChild(para4);
-    }
-
-    modalContent.appendChild(modalClose);
-    modalContent.appendChild(modalTitle);
-    modalContent.appendChild(modalSubTitle);
-    modalContent.appendChild(modalTextContainer);
-    modal.appendChild(modalContent);
-
-    UI.initModalCloseListener();
-  }
-
   static resetSearchBar() {
     const searchBar = document.getElementById('location-input');
     searchBar.value = '';
   }
 
-  static initModalCloseListener() {
-    const modal = document.getElementById('myModal');
-    const span = document.getElementById('modal-close');
-    span.onclick = function () {
-      modal.style.display = 'none';
-      UI.resetModalContent();
-    };
-    window.onclick = function (event) {
-      if (event.target == modal) {
-        modal.style.display = 'none';
-        UI.resetModalContent();
-      }
-    };
-    document.addEventListener('keyup', (e) => {
-      if (e.key === 'Escape') {
-        modal.style.display = 'none';
-        UI.resetModalContent();
-      }
-    });
-  }
-
-  static resetModalContent() {
-    const modal = document.getElementById('myModal');
-    while (modal.firstChild) {
-      modal.removeChild(modal.firstChild);
+  static displayErrorMessage(errorType) {
+    const errorInfo = document.getElementById('error-info');
+    errorInfo.style.visibility = 'visible';
+    if (errorType === 'locationNotFound') {
+      errorInfo.textContent = 'Location not found. Try again.';
     }
   }
+  
 }
 
 export { UI };
