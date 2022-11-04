@@ -1,6 +1,4 @@
 import { weatherAPI } from './weatherAPI';
-import { locationData } from './locationData';
-import { weatherData } from './weatherData';
 
 class UI {
   static setHomePage() {
@@ -89,13 +87,11 @@ class UI {
   }
 
   static displayWeatherData(weatherData, locationObject) {
-    const resultsContainer = document.getElementById('results-container');
     updateHeader(weatherData, locationObject);
     updateTemperature(weatherData);
     updateHumidity(weatherData);
     updateWind(weatherData);
     updateCloudiness(weatherData)
-    resultsContainer.style.display = 'flex';
 
     function updateHeader(weatherData, locationObject) {
       const resultsHeader = document.querySelector('.results-header');
