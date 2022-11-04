@@ -1,54 +1,134 @@
 :root {
-  --primary-dark: hsl(240, 10%, 15%);
+  --primary-dark: hsl(210, 10%, 15%);
   --primary-dark-lighter: hsl(240, 10%, 20%);
   --primary-light: hsl(240, 10%, 85%);
   --primary-light-darker: hsl(240, 10%, 80%);
 }
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-	display: block;
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
 }
 body {
-	line-height: 1;
+  line-height: 1;
 }
-ol, ul {
-	list-style: none;
+ol,
+ul {
+  list-style: none;
 }
-blockquote, q {
-	quotes: none;
+blockquote,
+q {
+  quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
-
 
 *,
 *::before,
@@ -63,13 +143,54 @@ body {
 }
 
 #main {
-  display: flex;
-  width: 100vw;
+  display: grid;
   height: 100vh;
-  justify-content: center;
-  align-items: center;
+  width: 100vw;
+  grid-template-rows: 140px 100px 1fr;
+  grid-template-columns: 1fr;
 
   background-color: var(--primary-dark);
+}
+
+#header-container {
+  grid-row: 1 / 2;
+}
+
+h1.main-header {
+  color: white;
+  font-size: 3rem;
+  font-weight: 900;
+  text-align: center;
+  padding: 2rem 0 1rem 0;
+}
+
+h2.sub-header {
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 500;
+  font-style: italic;
+  text-align: center;
+}
+
+
+#search-container {
+  grid-row: 2 / 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  gap: 14px;
+}
+
+#search-container p {
+  color: white;
+  font-size: 1.2rem;
+  visibility: hidden;
+}
+
+#results-container {
+  grid-row: 3 / 4;
 }
 
 input[type='text'] {
@@ -106,7 +227,7 @@ div#myModal {
   z-index: 1;
 
   background-color: black;
-  background-color: hsla(0, 0%, 0%, 0.4)
+  background-color: hsla(0, 0%, 0%, 0.4);
 }
 
 .modal-content {
@@ -115,7 +236,6 @@ div#myModal {
   height: 250px;
   border-radius: 15px;
   box-shadow: 0 4px 4px -4px black;
-
 
   color: var(--primary-dark);
 
@@ -132,7 +252,7 @@ div#myModal {
 }
 
 span#modal-close::after {
-  content: "\2715";
+  content: '\2715';
 }
 
 .modal-title,
