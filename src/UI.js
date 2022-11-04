@@ -131,8 +131,8 @@ class UI {
     
     function updateWind(weatherData) {
       const windValue = document.querySelector('.wind-value');
-      const windSpeed = Math.round(weatherData.wind.speed * 3.6);
-      windValue.textContent = `${windSpeed} km/h`;
+      const windSpeed = Math.round(weatherData.wind.speed);
+      windValue.textContent = `${windSpeed} m/s`;
     }
 
     function updateCloudiness(weatherData) {
