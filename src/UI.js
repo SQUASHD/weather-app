@@ -36,7 +36,7 @@ class UI {
     let requestedLocationData;
 
     errorInfo.textContent = 'Searching...';
-    
+
     if (UI.determineZipOrCity(locationInput) === 'zipCountryCode') {
       requestedLocationData = await weatherAPI.fetchLocationDataByZipPostCode(
         strippedLocationInput
@@ -60,6 +60,7 @@ class UI {
     console.log(weatherData);
     UI.resetSearchBar();
     errorInfo.style.visibility = 'hidden';
+    console.log("going to trigger displayWeatherData");
     UI.displayWeatherData(weatherData);
   }
 
@@ -89,7 +90,53 @@ class UI {
   }
 
   static displayWeatherData(weatherData) {
-    const main = document.getElementById('main');
+    const resultsContainer = document.getElementById('results-container');
+    updateHeader(weatherData);
+    updateTemperature(weatherData);
+    updateHumidity(weatherData);
+    updateWind(weatherData);
+    updateCloudiness(weatherData)
+    resultsContainer.style.display = 'flex';
+
+    function updateHeader(weatherData) {
+      const resultsHeader = document.querySelector('.results-header');
+      const weatherDescription = document.querySelector('.weather-description');
+
+      resultsHeader.textContent = weatherData.name;
+      weatherDescription.textContent = toTitleCase(weatherData.weather[0].description);
+
+      function toTitleCase(str) {
+        return str.replace(
+          /\w\S*/g,
+          (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+        );
+      }
+    }
+
+    function updateTemperature(weatherData) {
+      const temperatureMain = document.querySelector('.temperature-main');
+      const temperatureFeelsLike = document.querySelector('.temperature-feels-like');
+      const currentTemp = Math.round(weatherData.main.temp - 273.15);
+      const feelsLikeTemp = Math.round(weatherData.main.feels_like - 273.15);
+      temperatureMain.textContent = `${currentTemp}°C`;
+      temperatureFeelsLike.textContent = `Feels like ${feelsLikeTemp}°C`;
+    }
+
+    function updateHumidity(weatherData) {
+      const humidityValue = document.querySelector('.humidity-value');
+      humidityValue.textContent = `${weatherData.main.humidity}%`;
+    }
+    
+    function updateWind(weatherData) {
+      const windValue = document.querySelector('.wind-value');
+      const windSpeed = Math.round(weatherData.wind.speed * 3.6);
+      windValue.textContent = `${windSpeed} km/h`;
+    }
+
+    function updateCloudiness(weatherData) {
+      const cloudinessValue = document.querySelector('.cloudiness-value');
+      cloudinessValue.textContent = `${weatherData.clouds.all}%`;
+    }
   }
 
   static resetSearchBar() {
@@ -104,7 +151,6 @@ class UI {
       errorInfo.textContent = 'Location not found. Try again.';
     }
   }
-  
 }
 
 export { UI };
