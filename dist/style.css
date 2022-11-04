@@ -191,6 +191,20 @@ h2.sub-header {
 
 #results-container {
   grid-row: 3 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.weather-results-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 200px;
+  background-color: white;
+  gap: 14px;
 }
 
 input[type='text'] {
