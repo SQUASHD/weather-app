@@ -89,6 +89,10 @@ input[type='text'] {
   text-align: center;
 }
 
+input:focus::placeholder {
+  color: transparent;
+}
+
 div#myModal {
   display: none;
   justify-content: center;
@@ -110,17 +114,25 @@ div#myModal {
   width: 450px;
   height: 250px;
   border-radius: 15px;
+  box-shadow: 0 4px 4px -4px black;
+
+
+  color: var(--primary-dark);
+
   display: flex;
   flex-direction: column;
-  color: var(--primary-dark);
 }
 
-.modal-content span.close {
+.modal-content span#modal-close {
   cursor: pointer;
   position: relative;
   left: 15px;
   top: 15px;
   font-size: 24px;
+}
+
+span#modal-close::after {
+  content: "\2715";
 }
 
 .modal-title,
@@ -147,11 +159,11 @@ div.modal-text-container {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
 }
 
 p.modal-text {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 400;
   margin: 4px 0;
 }
