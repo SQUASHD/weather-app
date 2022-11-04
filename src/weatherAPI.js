@@ -1,7 +1,7 @@
 class weatherAPI {
   static async fetchLocationDataByLocationName(locationInput) {
     try {
-      const inputString = `http://api.openweathermap.org/geo/1.0/direct?q=${locationInput}&limit=1&appid=4235830f6ccafe215d9fa04cd144ac0f`;
+      const inputString = `https://api.openweathermap.org/geo/1.0/direct?q=${locationInput}&limit=1&appid=4235830f6ccafe215d9fa04cd144ac0f`;
       const response = await fetch(inputString, { mode: 'cors' });
       const locationData = await response.json();
       return locationData;
@@ -11,7 +11,7 @@ class weatherAPI {
   }
 
   static async fetchLocationDataByZipPostCode(zipCodeAndCountryCode) {
-    const inputString = `http://api.openweathermap.org/geo/1.0/zip?zip=${zipCodeAndCountryCode}&appid=4235830f6ccafe215d9fa04cd144ac0f`;
+    const inputString = `https://api.openweathermap.org/geo/1.0/zip?zip=${zipCodeAndCountryCode}&appid=4235830f6ccafe215d9fa04cd144ac0f`;
 
     try {
       const response = await fetch(inputString, { mode: 'cors' });
