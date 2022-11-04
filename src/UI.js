@@ -100,10 +100,12 @@ class UI {
     function updateHeader(weatherData, locationObject) {
       const resultsHeader = document.querySelector('.results-header');
       const weatherDescription = document.querySelector('.weather-description');
+      const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' });
+      const countryName = regionNamesInEnglish.of(locationObject.country);
       if (locationObject.state) {
-        resultsHeader.textContent = `${locationObject.name}, ${locationObject.state}, ${locationObject.country}`;
+        resultsHeader.textContent = `${locationObject.name}, ${locationObject.state}, ${countryName}`;
       } else { 
-        resultsHeader.textContent = `${locationObject.name}, ${locationObject.country}`;
+        resultsHeader.textContent = `${locationObject.name}, ${countryName}`;
       }
       weatherDescription.textContent = toTitleCase(weatherData.weather[0].description);
 
