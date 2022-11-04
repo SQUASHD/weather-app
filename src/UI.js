@@ -5,12 +5,18 @@ import { weatherData } from './weatherData';
 class UI {
   static setHomePage() {
     const main = document.getElementById('main');
-    const searchBar = document.createElement('input');
-    searchBar.setAttribute('type', 'text');
-    searchBar.setAttribute('id', 'location-input');
-    searchBar.setAttribute('placeholder', 'Search for a location');
-    main.appendChild(searchBar);
+    const mainTitle = document.createElement('h1');
+    mainTitle.setAttribute('id', 'main-title');
+    generateSearchBar();
     UI.initSearchListener();
+
+    function generateSearchBar() {
+      const searchBar = document.createElement('input');
+      searchBar.setAttribute('type', 'text');
+      searchBar.setAttribute('id', 'location-input');
+      searchBar.setAttribute('placeholder', 'Search for a location');
+      main.appendChild(searchBar);
+    }
   }
 
   static initSearchListener() {
@@ -38,9 +44,10 @@ class UI {
     }
     console.log(requestedLocationData);
 
-    if (requestedLocationData === []) {
-      UI.displayError();
+    if (requestedLocationData[0] === undefined) {
+      UI.displayModal('locationNotFound');
       UI.resetSearchBar();
+      return;
     }
 
     const locationObject = await requestedLocationData[0];
@@ -82,7 +89,7 @@ class UI {
 
   // Modal Formatting
 
-  static displayError(error) {
+  static displayModal(trigger) {
     const modal = document.getElementById('myModal');
     const modalContent = document.createElement('div');
     const modalClose = document.createElement('span');
@@ -90,26 +97,35 @@ class UI {
     const modalSubTitle = document.createElement('h4');
     const modalTextContainer = document.createElement('div');
 
+    modal.style.display = 'flex';
     modalContent.setAttribute('class', 'modal-content');
-    modalClose.setAttribute('class', 'close');
+    modalClose.setAttribute('id', 'modal-close');
     modalTitle.setAttribute('class', 'modal-title');
-    modalSubTitle.setAttribute('class', 'modal-subtitle');
+    modalSubTitle.setAttribute('class', 'modal-title');
     modalTextContainer.setAttribute('class', 'modal-text-container');
+
+    if ((trigger = 'locationNotFound')) {
+      const para1 = document.createElement('p');
+      const para2 = document.createElement('p');
+      const para3 = document.createElement('p');
+      const para4 = document.createElement('p');
+      modalTitle.textContent = 'Error';
+      modalSubTitle.textContent = 'Location Not Found';
+      para1.textContent = 'Please try again.';
+      para2.textContent = 'Make sure your location is spelled correctly.';
+      para3.textContent = 'Make sure your location is in the correct format.';
+      para4.textContent = 'eg. New York, US';
+      modalTextContainer.appendChild(para1);
+      modalTextContainer.appendChild(para2);
+      modalTextContainer.appendChild(para3);
+      modalTextContainer.appendChild(para4);
+    }
 
     modalContent.appendChild(modalClose);
     modalContent.appendChild(modalTitle);
     modalContent.appendChild(modalSubTitle);
     modalContent.appendChild(modalTextContainer);
     modal.appendChild(modalContent);
-    
-    if ((error = 'no data')) {
-      modalClose.textContent = '&times;';
-      modalTitle.textContent = 'Error';
-      modalSubTitle.textContent = 'Location Not Found';
-      const para1 = document.createElement('p');
-      para1.textContent = 'Please try again.';
-      modalTextContainer.appendChild(para1);
-    }
 
     UI.initModalCloseListener();
   }
@@ -121,7 +137,7 @@ class UI {
 
   static initModalCloseListener() {
     const modal = document.getElementById('myModal');
-    const span = document.getElementsByClassName('close')[0];
+    const span = document.getElementById('modal-close');
     span.onclick = function () {
       modal.style.display = 'none';
       UI.resetModalContent();
