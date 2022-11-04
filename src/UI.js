@@ -5,7 +5,11 @@ import { weatherData } from './weatherData';
 class UI {
   static setHomePage() {
     const main = document.getElementById('main');
-    main.innerHTML = `<input type="text" name="location-input" id="location-input" />`;
+    const searchBar = document.createElement('input');
+    searchBar.setAttribute('type', 'text');
+    searchBar.setAttribute('id', 'location-input');
+    searchBar.setAttribute('placeholder', 'Search for a location');
+    main.appendChild(searchBar);
     UI.initSearchListener();
   }
 
@@ -14,52 +18,37 @@ class UI {
     searchBar.addEventListener('keyup', (e) => {
       if (e.key === 'Enter') {
         const locationInput = searchBar.value;
-        if (!UI.validateLocationInput(locationInput)) {
-          return UI.callWrongInputModal();
-        }
         UI.processUserInput(locationInput);
       }
     });
   }
 
   static async processUserInput(locationInput) {
-    const strippedLocationInput = UI.stripWhiteSpace(locationInput);
-    console.log(strippedLocationInput);
+    const strippedLocationInput = UI.stripReplaceWhiteSpace(locationInput);
+
     let requestedLocationData;
     if (UI.determineZipOrCity(locationInput) === 'zipCountryCode') {
       requestedLocationData = await weatherAPI.fetchLocationDataByZipPostCode(
         strippedLocationInput
       );
-      console.log('zipCountryCode');
     } else {
       requestedLocationData = await weatherAPI.fetchLocationDataByLocationName(
         strippedLocationInput
       );
     }
+    console.log(requestedLocationData);
+
+    if (requestedLocationData === []) {
+      UI.displayError();
+      UI.resetSearchBar();
+    }
+
     const locationObject = await requestedLocationData[0];
-    const inputLat = (await Math.round(locationObject.lat * 100)) / 100;
-    const inputLon = (await Math.round(locationObject.lon * 100)) / 100;
+    const inputLat = Math.round(locationObject.lat * 100) / 100;
+    const inputLon = Math.round(locationObject.lon * 100) / 100;
     const weatherData = await weatherAPI.fetchWeatherData(inputLat, inputLon);
     console.log(weatherData);
-  }
-
-  static validateLocationInput(locationInput) {
-    const cityRegex = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/;
-    const cityCountryCodeRegex = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*,\s[a-zA-Z]{2}$/;
-    const cityStateCountryCodeRegex = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*,\s[a-zA-Z]{2},\s[a-zA-Z]{2}$/;
-    const zipCountryCodeRegex = /^\d{5},\s[a-zA-Z]{2}$/;
-
-    if (cityRegex.test(locationInput)) {
-      return true;
-    } else if (cityCountryCodeRegex.test(locationInput)) {
-      return true;
-    } else if (cityStateCountryCodeRegex.test(locationInput)) {
-      return true;
-    } else if (zipCountryCodeRegex.test(locationInput)) {
-      return true;
-    } else {
-      return false;
-    }
+    UI.displayWeatherData(weatherData);
   }
 
   static determineZipOrCity(locationInput) {
@@ -67,18 +56,18 @@ class UI {
     const cityStateCountryCodeRegex = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*,\s[a-zA-Z]{2},\s[a-zA-Z]{2}$/;
     const zipCountryCodeRegex = /^\d{5},\s[a-zA-Z]{2}$/;
 
-    if (cityCountryCodeRegex.test(locationInput)) {
-      return 'cityCountryCode';
+    if (zipCountryCodeRegex.test(locationInput)) {
+      return 'zipCountryCode';
     } else if (cityStateCountryCodeRegex.test(locationInput)) {
       return 'cityStateCountryCode';
-    } else if (zipCountryCodeRegex.test(locationInput)) {
-      return 'zipCountryCode';
+    } else if (cityCountryCodeRegex.test(locationInput)) {
+      return 'cityCountryCode';
     } else {
       return 'city';
     }
   }
 
-  static stripWhiteSpace(input) {
+  static stripReplaceWhiteSpace(input) {
     const returnString = input
       .replace(/^\s+/, '')
       .replace(/\s+$/, '')
@@ -87,21 +76,47 @@ class UI {
     return returnString;
   }
 
+  static displayWeatherData(weatherData) {
+    const main = document.getElementById('main');
+  }
+
   // Modal Formatting
 
-  static callWrongInputModal() {
+  static displayError(error) {
     const modal = document.getElementById('myModal');
-    modal.innerHTML = `
-      <div class="modal-content">
-      <span class="close">&times;</span>
-      <h3 class="modal-title">Oops!</h3>
-      <h4 class="modal-title">Looks like you didn't write a valid input.</h4>
-      <div class="modal-text-container">
-        <p class="modal-text">Try searching for:</p>
-        <p class="modal-text">City Name, 2-Letter Country Code</p>
-        <p class="modal-text">eg: Birmingham, UK</p>`;
-    modal.style.display = 'flex';
+    const modalContent = document.createElement('div');
+    const modalClose = document.createElement('span');
+    const modalTitle = document.createElement('h3');
+    const modalSubTitle = document.createElement('h4');
+    const modalTextContainer = document.createElement('div');
+
+    modalContent.setAttribute('class', 'modal-content');
+    modalClose.setAttribute('class', 'close');
+    modalTitle.setAttribute('class', 'modal-title');
+    modalSubTitle.setAttribute('class', 'modal-subtitle');
+    modalTextContainer.setAttribute('class', 'modal-text-container');
+
+    modalContent.appendChild(modalClose);
+    modalContent.appendChild(modalTitle);
+    modalContent.appendChild(modalSubTitle);
+    modalContent.appendChild(modalTextContainer);
+    modal.appendChild(modalContent);
+    
+    if ((error = 'no data')) {
+      modalClose.textContent = '&times;';
+      modalTitle.textContent = 'Error';
+      modalSubTitle.textContent = 'Location Not Found';
+      const para1 = document.createElement('p');
+      para1.textContent = 'Please try again.';
+      modalTextContainer.appendChild(para1);
+    }
+
     UI.initModalCloseListener();
+  }
+
+  static resetSearchBar() {
+    const searchBar = document.getElementById('location-input');
+    searchBar.value = '';
   }
 
   static initModalCloseListener() {
@@ -109,14 +124,27 @@ class UI {
     const span = document.getElementsByClassName('close')[0];
     span.onclick = function () {
       modal.style.display = 'none';
-      modal.innerHTML = '';
+      UI.resetModalContent();
     };
     window.onclick = function (event) {
       if (event.target == modal) {
         modal.style.display = 'none';
-        modal.innerHTML = '';
+        UI.resetModalContent();
       }
     };
+    document.addEventListener('keyup', (e) => {
+      if (e.key === 'Escape') {
+        modal.style.display = 'none';
+        UI.resetModalContent();
+      }
+    });
+  }
+
+  static resetModalContent() {
+    const modal = document.getElementById('myModal');
+    while (modal.firstChild) {
+      modal.removeChild(modal.firstChild);
+    }
   }
 }
 
